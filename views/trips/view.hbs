@@ -1,0 +1,16 @@
+<br/>
+
+{{#each trip}}
+<div class="card dm" style="width: 28rem; margin: auto;">
+  <div class="card-header" style="text-align: center; display: inline;">
+    <a href="/trips/delete?id={{ id }}" style="float:right;">
+        <img src="../images/delete.png" style="height: 28px; width: 28px; position:relative; top:10px;"/>
+    </a>
+    <h2>{{ name }}</h2>
+  </div>
+  <ul class="list-group list-group-flush">
+    <h6 class="list-group-item"><b>Trip Date:</b>  {{ year }}</h6>
+    <h6 class="list-group-item"><b>Description:</b>  {{ description }}</h6>
+  </ul>
+</div>
+{{/each}}

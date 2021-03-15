@@ -1,8 +1,40 @@
-<h1>{{title}}</h1>
+<div>
+    <h1 style="display: inline;">{{title}}</h1>
+    <img src="../images/travel.png" style="height: 48px; width: 48px; position:relative; bottom:5px;"/>
+</div>
 
 <button type="button" class="btn btn-primary" style="border-radius: 20px;">
     <img src="../images/add.png" style="height: 24px; width: 24px;"/>
       <a class="nav-link text-white" href="/trips/add" style="display: inline;">
-        Add Listing
+        Add Trip
       </a>
 </button>
+
+<br/> <br/>
+
+<h3 style="text-align: center;">Here is a listing of Trips</h3>
+
+<br/>
+
+<table class="table" style="width: 500px; margin: auto" >
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Year</th>
+            <th scope="col">Description</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    {{#each tripList}}
+        <tbody>
+            <tr>
+                <th scope="row">{{name}}</th>
+                <td>{{year}}</td>
+                <td>{{description}}</td>
+                <td><a href="/trips/view?id={{ id }}">
+                    <img src="../images/open-link.png" style="height: 24px; width: 24px;"/>
+                </a></td>
+            </tr>
+        </tbody>
+    {{/each}}
+</table>

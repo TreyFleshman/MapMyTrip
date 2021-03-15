@@ -6,7 +6,7 @@
   </div>
   <div class="card-body">
 
-    <form method="POST" action="/trips/save" style="width: 600px; margin: auto;">
+    <form method="POST" action="/trips/save" style="width: 600px; margin: auto;">    
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Trip Title</span>            
@@ -14,11 +14,18 @@
             value= "{{#if trip }}{{trip.title}}{{/if}}" required>
         </div>
 
-
+        <!--
         <div class="input-group mb-3">
              <span class="input-group-text">Trip Date</span>
-            <input class="form-control" type="date" name='date' value= "{{#if campaign }}{{campaign.start_date}}{{/if}}">
+            <input class="form-control" type="date" name='date' value= "{{#if trip }}{{trip.date}}{{/if}}">
         </div>  
+        -->
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Trip Date</span>            
+            <input type="text" name="date" class="form-control" placeholder='' aria-label="Username" aria-describedby="basic-addon1" 
+            value= "{{#if trip }}{{trip.date}}{{/if}}" required>
+        </div>
 
         <div class="input-group">
             <span class="input-group-text">Description</span>
