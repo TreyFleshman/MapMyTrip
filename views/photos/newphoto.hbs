@@ -1,0 +1,11 @@
+<h1>Upload Photo</h1>
+
+
+<form method="post" name="photo_form" action="/photos/upload" enctype="multipart/form-data"
+    style="width: 500px; text-align: center; margin: auto;">
+    <input type="hidden" name="trip_id" value="{{trip_id}}" />
+    <input class="form-control" id="customFile" type="file" name="file" accept = ".jpg, .jpeg, .png" /> <br/>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+

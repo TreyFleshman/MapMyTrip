@@ -1,16 +1,92 @@
-<br/>
+<style type="text/css">
+    /* Set the size of the div element that contains the map */
+    #map {
+      height: 250px;
+      width: 650px;
+      margin: auto;
+    }
+</style>
+<script>
+    
+    let map;
+    function initMap(data) {
+        map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 1.5,
+        center: new google.maps.LatLng(43.32517767999296 , -1.7578125)
+      });
+        
+      var ID = window.location.href.split('=').pop()
 
-{{#each trip}}
-<div class="card dm" style="width: 28rem; margin: auto;">
-  <div class="card-header" style="text-align: center; display: inline;">
-    <a href="/trips/delete?id={{ id }}" style="float:right;">
-        <img src="../images/delete.png" style="height: 28px; width: 28px; position:relative; top:10px;"/>
-    </a>
-    <h2>{{ name }}</h2>
-  </div>
-  <ul class="list-group list-group-flush">
-    <h6 class="list-group-item"><b>Trip Date:</b>  {{ year }}</h6>
-    <h6 class="list-group-item"><b>Description:</b>  {{ description }}</h6>
-  </ul>
-</div>
-{{/each}}
+      fetch('https://8081-cs-988431397893-default.cs-us-east1-wzxb.cloudshell.dev/trips/data')
+      .then(res => res.json())
+      .then( (data) => data.filter(data => data.trip_id === ID))
+      
+      .then((data) => {
+
+        for (var i = 0; i < data.length; i++) {
+            const latLng = new google.maps.LatLng(data[i].latitude, data[i].longitude);
+            marker = new google.maps.Marker({
+            position: latLng,
+            icon: data[i].smThumbURL,            
+            map: map,
+            });
+        }
+        map.panTo(marker.getPosition());
+        map.setZoom(6.5);
+      })
+    }
+    
+</script>
+<body>
+  <div id="map"></div>
+  
+  <br/>
+
+    {{#each trip}}
+    <div class="card dm" style="width: 28rem; margin: auto;">
+    <div class="card-header" style="text-align: center; display: inline;">
+        <a href="/trips/delete?id={{ id }}" style="float:right;">
+            <img src="../images/delete.png" style="height: 28px; width: 28px; position:relative; top:10px;"/>
+        </a>
+        <h2>{{ name }}</h2>
+    </div>
+    <ul class="list-group list-group-flush">
+        <h6 class="list-group-item"><b>Trip Date:</b>  {{ year }}</h6>
+        <h6 class="list-group-item"><b>Description:</b>  {{ description }}</h6>
+    </ul>
+    </div>
+
+    <br/>
+
+    <div style="text-align: center;">
+        <a class="btn btn-primary"  href="/photos/new?id={{id}}">
+            Add New Photo
+        </a>
+    </div>
+    {{/each}}
+
+    <br/>
+
+    <div class="img-card">
+        {{#each imageList}}
+        <div class="card">
+        <img class="trip-img" src="{{imageURL}}" class="card-img-top">
+        <div class="card-body">
+            <p class="card-text" style="text-align: center;">
+                <small class="text-muted">
+                    {{createDate}}
+                </small>
+            </p>
+        </div>
+        </div>
+        {{/each}}
+    </div>
+
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDnfcCrukdEnWWjx_VybgbTWSXff9lFBQ&callback=initMap&libraries=&v=weekly&imageList"
+    async
+></script>
+
+</body>
+
+

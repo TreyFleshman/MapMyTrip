@@ -2,15 +2,22 @@ require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 
+const MongoClient = require('mongodb').MongoClient;
+
 const connection = require('../services/db');
 
+const uri = process.env.MONGO_URI;
+const dbName = "MapMyTrip";
+const client = new MongoClient(uri, { useUnifiedTopology: true });
+
 /* GET trips page, display all trips */
-router.get('/', async (req, res, next) => {
-  
-  await selectTrips( function (results){
+router.get('/', (req, res, next) => {
+
+    selectTrips( function (results){
     console.log('Finding Trips to Display!');
-     res.render('trips/index', { title: 'Trips', tripList: results});
-  })
+    res.render('trips/index', { title: 'Trips', tripList: results});
+    })
+
 });
 
 /* GET single trip */
@@ -25,18 +32,39 @@ router.get('/view', async (req, res, next) => {
             if (error) throw error;
             callback(Singletrip);
         }) 
-
     };
 
     /* GET view trip page */
     await selectSingleTrip( function (Singletrip){
-        console.log('Finding Trips to Display!');
-        res.render('trips/view', {
-        trip: Singletrip    
+        client.connect(function(err){
+        console.log("Connected to Server!");
+        //Pointer to DB
+        const db = client.db(dbName);
+        var query = { trip_id: req.query.id }
+          findImages(db, query, function(docs){
+            console.log("Found documents matching results.");
+            var imageList = docs
+            console.log('Finding Trips to Display!');
+            res.render('trips/view', {
+            trip: Singletrip,
+            imageList    
+            });
+            return docs;
+          })
         });
-    })
-
+    });
 });
+
+    /* GET images JSON */
+    router.get('/data', (req, res, next) => {
+        client.connect((err) => {
+        //Pointer to DB
+            const db = client.db(dbName);
+            findAll(db, function(docs){
+            res.send(docs);
+            })
+        });
+    });
 
 /* GET to the add trip form */
 router.get('/add', (req, res, next) => {    
@@ -98,6 +126,26 @@ const selectTrips = async function(callback) {
         callback(results);
     }) 
 
+};
+
+const findImages = function(db, query, callback){
+     // Set const that holds docs collection
+    const collection = db.collection('Images');
+
+    // Find all documents in collection
+    collection.find(query).toArray(function(err, result) {
+    callback(result);
+    });
+};
+
+const findAll = function(db, callback){
+     // Set const that holds docs collection
+    const collection = db.collection('Images');
+
+    // Find all documents in collection
+    collection.find().toArray(function(err, result) {
+    callback(result);
+    });
 };
 
 module.exports = router;
