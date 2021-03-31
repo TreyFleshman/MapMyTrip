@@ -1,14 +1,7 @@
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
-
-const MongoClient = require('mongodb').MongoClient;
-
 const connection = require('../services/db');
-
-const uri = process.env.MONGO_URI;
-const dbName = "MapMyTrip";
-const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 /* GET trips page, display all trips */
 router.get('/', (req, res, next) => {
@@ -34,37 +27,25 @@ router.get('/view', async (req, res, next) => {
         }) 
     };
 
-    /* GET view trip page */
-    await selectSingleTrip( function (Singletrip){
-        client.connect(function(err){
-        console.log("Connected to Server!");
-        //Pointer to DB
-        const db = client.db(dbName);
-        var query = { trip_id: req.query.id }
-          findImages(db, query, function(docs){
-            console.log("Found documents matching results.");
-            var imageList = docs
-            console.log('Finding Trips to Display!');
-            res.render('trips/view', {
-            trip: Singletrip,
-            imageList    
-            });
-            return docs;
-          })
-        });
-    });
+    // GET view trip page - demo 
+    await selectSingleTrip( async (Singletrip) => {
+        console.log('Finding Trips to Display!');
+        // Call MongoDB for our photos
+        await retrievePhotos(req.db, req.query.id, function(docs){
+        res.render('trips/view', {
+          trip: Singletrip,
+          imageList: docs
+        })
+      });
+    })
 });
 
-    /* GET images JSON */
-    router.get('/data', (req, res, next) => {
-        client.connect((err) => {
-        //Pointer to DB
-            const db = client.db(dbName);
-            findAll(db, function(docs){
-            res.send(docs);
-            })
-        });
-    });
+/* GET images JSON */
+router.get('/data', (req, res, next) => {
+    findAll(req.db, function(docs){
+    res.send(docs);
+    })
+});
 
 /* GET to the add trip form */
 router.get('/add', (req, res, next) => {    
@@ -128,24 +109,21 @@ const selectTrips = async function(callback) {
 
 };
 
-const findImages = function(db, query, callback){
-     // Set const that holds docs collection
-    const collection = db.collection('Images');
-
-    // Find all documents in collection
-    collection.find(query).toArray(function(err, result) {
-    callback(result);
+const findAll = async function(mongo_db, callback){
+    mongo_db.db(process.env.MONGO_DB_NAME).collection(process.env.MONGO_COLLECTION_NAME).find().toArray
+    (function(err, result) {
+        callback(result);
     });
 };
 
-const findAll = function(db, callback){
-     // Set const that holds docs collection
-    const collection = db.collection('Images');
+const retrievePhotos = async function(mongo_db, trip_id, callback){
 
-    // Find all documents in collection
-    collection.find().toArray(function(err, result) {
-    callback(result);
-    });
+  var searchString = trip_id + "_";
+
+  // Find all of the documents in the collection
+  mongo_db.db(process.env.MONGO_DB_NAME).collection(process.env.MONGO_COLLECTION_NAME).find({fileName: new RegExp(searchString) }).toArray(function(err, docs) {
+      callback(docs);
+  });
 };
 
 module.exports = router;
