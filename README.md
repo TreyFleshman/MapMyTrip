@@ -1,7 +1,7 @@
 # Map My Trip
+https://tech581-treyfles-donationpal.uc.r.appspot.com/
 
-### Front End
-
-Used Express to create a front end web applicaiton for MapMyTrip.
-Users can add a trip, the data they enter is stored in a Cloud MySQL database. 
-The applicaiton shows all of the users trips they have created and allows users to delete a trip if they'd like.  
+## Express & Handlebars Node.js application
+## Mongo DB Intergration
+## Google Cloud Function to resize uploaded images
+## Google Cloud Function to export exif data from images
