@@ -1,5 +1,5 @@
 # Map My Trip
-https://tech581-treyfles-donationpal.uc.r.appspot.com/
+https://cit412-treyfles-mapmytrip.uc.r.appspot.com/
 
 ## Express & Handlebars Node.js application
 ## Mongo DB Intergration
